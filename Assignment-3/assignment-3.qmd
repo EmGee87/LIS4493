@@ -1,0 +1,44 @@
+---
+title: "Assignment-3"
+author: "Mindy Marshall"
+format: html
+editor: visual
+---
+
+
+## Data Cleaning and Preparation
+This section will clean the Nobel Prize dataset by renaming columns, removing unnecessary data, and preparing the text for further analysis.
+
+
+# Load necessary libraries
+library(tidyverse)
+library(lubridate)
+
+# Read the CSV file
+nobel_data <- read_csv("nobel-prize-winners.csv", show_col_types = FALSE)
+
+# Data Cleaning Process
+nobel_cleaned <- nobel_data %>%
+  drop_na(motivation) %>%  # Remove rows with missing motivation text
+  distinct() %>%  # Remove duplicate rows
+  rename(
+    laureate_name = name,
+    motivation_text = motivation,
+    birth_country = bornCountry_now,
+    birth_city = bornCity_now,
+    birth_year = born,
+    death_year = died,
+    category = category,
+    award_year = year
+  ) %>%
+  mutate(
+    award_year = as.integer(award_year),
+    birth_year = year(as.Date(birth_year, format = "%Y-%m-%d")),
+    death_year = year(as.Date(death_year, format = "%Y-%m-%d")),
+    laureate_name = str_trim(laureate_name),  # Remove extra whitespace
+    gender = str_to_lower(gender)  # Convert gender text to lowercase
+  )
+
+# Display cleaned data summary
+glimpse(nobel_cleaned)
+
